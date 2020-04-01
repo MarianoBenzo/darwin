@@ -1,13 +1,19 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import SocketService from "./services/SocketService";
+import {Test} from "./components/Test";
 
 const styles = require('./style/index.css');
 
 const App = () => {
+
   return (
-    <div className={styles.container}>
-      Darwin
-    </div>
+    <SocketService>
+      <div className={styles.container}>
+        Darwin
+        <Test/>
+      </div>
+    </SocketService>
   )
 };
 
