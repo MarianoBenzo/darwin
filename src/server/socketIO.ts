@@ -4,6 +4,12 @@ import {Server} from 'http';
 export const init = (server: Server) => {
   const io = SocketIO(server);
 
+  const heartbeat = () => {
+    io.sockets.emit('heartbeat', 'heartbeat')
+  };
+
+  setInterval(heartbeat, 1000);
+
   io.on('connection', (socket) => {
     console.log('New connection: ', socket.id);
 

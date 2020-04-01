@@ -36,6 +36,10 @@ const SocketService = (props: Props) => {
       console.log('news: ', data);
       socket.emit('my other event', { my: 'data' });
     });
+
+    socket.on('heartbeat', (heartbeat) => {
+      console.log('heartbeat: ', heartbeat);
+    });
   };
 
   const context: SocketContextProps = {
