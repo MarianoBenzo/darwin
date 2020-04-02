@@ -1,23 +1,22 @@
 import SocketIO from 'socket.io';
 import {Server} from 'http';
 
+const World = require("./darwin/world.ts").default;
+
 export const init = (server: Server) => {
   const io = SocketIO(server);
 
-  const heartbeat = () => {
-    io.sockets.emit('heartbeat', 'heartbeat')
+  const emitWorld = () => {
+    io.sockets.emit('world', World);
+    World.update()
   };
 
-  setInterval(heartbeat, 1000);
+  setInterval(emitWorld, 1000/60);
 
   io.on('connection', (socket) => {
     console.log('New connection: ', socket.id);
 
-    socket.emit('news', {hello: 'world'});
-
-    socket.on('my other event', (data) => {
-      console.log('my other event: ', data);
-    });
+    World.addSocketId(socket.id);
 
     socket.on('disconnect', () => {
       console.log('Disconnect: ', socket.id);

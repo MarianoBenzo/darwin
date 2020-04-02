@@ -2,7 +2,7 @@
   "name": "darwin",
   "version": "1.0.0",
   "description": "Darwin",
-  "main": "index.tsx",
+  "main": "App.tsx",
   "scripts": {
     "dev": "NODE_ENV=development nodemon --exec babel-node src/server/server.ts"
   },

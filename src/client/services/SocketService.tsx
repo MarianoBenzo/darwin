@@ -1,6 +1,8 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import * as io from "socket.io-client";
+import CanvasService from "./CanvasService";
+import {World} from "../models/World";
 
 interface Props {
   children: JSX.Element[] | JSX.Element
@@ -8,10 +10,12 @@ interface Props {
 
 export interface SocketContextProps {
   socketId: string
+  world: World;
 }
 
 export const SocketContext = React.createContext<SocketContextProps>({
-  socketId: null
+  socketId: null,
+  world: null
 });
 
 const SocketService = (props: Props) => {
@@ -19,6 +23,7 @@ const SocketService = (props: Props) => {
   const {children} = props;
 
   const [socketId, setSocketId] = useState(null);
+  const [world, setWorld] = useState(null);
 
   useEffect(() => {
     init();
@@ -29,21 +34,19 @@ const SocketService = (props: Props) => {
 
     socket.on('connect', () => {
       console.log("socket: ", socket.id);
-      setSocketId(socket.id)
-    });
+      setSocketId(socket.id);
 
-    socket.on('news', (data) => {
-      console.log('news: ', data);
-      socket.emit('my other event', { my: 'data' });
-    });
-
-    socket.on('heartbeat', (heartbeat) => {
-      console.log('heartbeat: ', heartbeat);
+      socket.on('world', (world: World) => {
+        //console.log('world: ', world);
+        setWorld(world);
+        CanvasService.draw(world);
+      });
     });
   };
 
   const context: SocketContextProps = {
-    socketId: socketId
+    socketId: socketId,
+    world: world
   };
 
   return (

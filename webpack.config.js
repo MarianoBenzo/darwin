@@ -5,7 +5,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   mode: isProduction ? 'production' : 'development',
-  entry: './src/client/index.tsx',
+  entry: './src/client/App.tsx',
   output: {
     path: '/',
     filename: 'bundle.js'
@@ -25,6 +25,28 @@ module.exports = {
         loader: 'ts-loader',
         exclude: /node_modules/
       },
+      {
+        test: /\.(css|scss)$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader',
+            query: {
+              modules: true,
+              localIdentName: '[name]__[local]___[hash:base64:5]'
+            }
+          },
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true
+            }
+          }
+        ]
+      }
+      /*
       {
         test: /\.css$/,
         use: [
@@ -58,6 +80,7 @@ module.exports = {
           }
         ]
       }
+      */
     ]
   },
   plugins: [
