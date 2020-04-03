@@ -41,13 +41,13 @@ class CanvasService {
   drawCell(cell: Cell) {
     const fillColor = 'rgba(0, 0, 255, 0.7)';
     const strokeColor = 'rgba(0, 0, 255, 0.8)';
-    this.drawCircle(cell.x, cell.y, 20, fillColor, strokeColor);
+    this.drawCircle(cell.x, cell.y, 15, 3, fillColor, strokeColor);
   }
 
   drawFood(food: Food) {
-    const fillColor = 'rgba(255, 0, 0, 0.7)';
-    const strokeColor = 'rgba(255, 0, 0, 0.8)';
-    this.drawCircle(food.x, food.y, 10, fillColor, strokeColor);
+    const fillColor = 'rgba(255, 0, 0, 0.6)';
+    const strokeColor = 'rgba(255, 0, 0, 0.7)';
+    this.drawCircle(food.x, food.y, 5, 2, fillColor, strokeColor);
   }
 
   drawGrid(width: number, height: number) {
@@ -80,14 +80,14 @@ class CanvasService {
 
   }
 
-  drawCircle(x: number, y: number, radius: number, fillColor: string, strokeColor: string) {
+  drawCircle(x: number, y: number, radius: number, lineWidth: number, fillColor: string, strokeColor: string) {
     this.ctx.fillStyle = fillColor;
     this.ctx.beginPath();
     this.ctx.arc(x,y,radius,0,(Math.PI/180)*360,true);
     this.ctx.closePath();
     this.ctx.fill();
     this.ctx.strokeStyle = strokeColor;
-    this.ctx.lineWidth = 4;
+    this.ctx.lineWidth = lineWidth;
     this.ctx.stroke();
   }
 }

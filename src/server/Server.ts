@@ -3,7 +3,7 @@ import express from 'express';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 
-const socketIO = require("./socketIO.ts");
+const SocketIOService = require("./darwin/services/SocketIOService.ts").default;
 
 // initializing packages
 const app = express();
@@ -27,25 +27,6 @@ app.get('/api', (req, res) => {
 export const server = app.listen(app.get('port'), () => {
   console.log(`Server on port ${app.get('port')}`);
 });
-/*
-const initSocketIO = (server: Server) => {
-  const io = SocketIO(server);
-
-  io.on('connection', (socket) => {
-    console.log('New connection: ', socket.id);
-
-    socket.emit('news', {hello: 'world'});
-
-    socket.on('my other event', (data) => {
-      console.log('my other event: ', data);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('Disconnect: ', socket.id);
-    });
-  });
-};
-*/
 
 // socket io
-socketIO.init(server);
+SocketIOService.init(server);

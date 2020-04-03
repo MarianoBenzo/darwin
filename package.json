@@ -4,7 +4,7 @@
   "description": "Darwin",
   "main": "App.tsx",
   "scripts": {
-    "dev": "NODE_ENV=development nodemon --exec babel-node src/server/server.ts"
+    "dev": "NODE_ENV=development nodemon --exec babel-node src/server/Server.ts"
   },
   "keywords": [],
   "author": "Mariano Benzo",

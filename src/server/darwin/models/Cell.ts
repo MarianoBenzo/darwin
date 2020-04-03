@@ -1,6 +1,6 @@
 import Random from 'random';
 
-const Normalizer = require("./utils/normalizer.ts").default;
+const CoordinatesService = require("../services/CoordinatesService.ts").default;
 
 class Cell {
   x: number;
@@ -16,13 +16,13 @@ class Cell {
   }
 
   moveRandom(worldWidth: number, worldHeight: number) {
-    const nextAngle = Random.normal(this.angle, 0.15)();
+    const nextAngle = Random.normal(this.angle, 0.10)();
     const nextX = this.x + Math.cos(this.angle) * this.velocity;
     const nextY = this.y + Math.sin(this.angle) * this.velocity;
 
-    this.angle = Normalizer.angle(nextAngle);
-    this.x = Normalizer.x(nextX, worldWidth);
-    this.y = Normalizer.y(nextY, worldHeight);
+    this.angle = CoordinatesService.normalizeAngle(nextAngle);
+    this.x = CoordinatesService.normalizeX(nextX, worldWidth);
+    this.y = CoordinatesService.normalizeY(nextY, worldHeight);
   }
 }
 
