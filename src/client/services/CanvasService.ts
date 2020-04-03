@@ -1,4 +1,6 @@
 import {World} from "../models/World";
+import Food from "../models/Food";
+import Cell from "../models/Cell";
 
 class CanvasService {
   ctx: CanvasRenderingContext2D;
@@ -20,23 +22,39 @@ class CanvasService {
     this.ctx = canvas.getContext('2d');
   }
 
-  draw(world: World) {
+  drawWorld(world: World) {
     if(this.ctx) {
       this.ctx.clearRect(0, 0, this.width, this.height);
 
       this.drawGrid(world.width, world.height);
 
-      this.drawCircle(world.width / 2, world.height / 2, 50);
+      world.foods.forEach(food =>
+        this.drawFood(food)
+      );
 
-      world.food.forEach(food =>
-        this.drawCircle(food.x, food.y, 10)
+      world.cells.forEach(cell =>
+        this.drawCell(cell)
       )
     }
   }
 
-  drawGrid(width: number, height: number) {
+  drawCell(cell: Cell) {
+    const fillColor = 'rgba(0, 0, 255, 0.7)';
+    const strokeColor = 'rgba(0, 0, 255, 0.8)';
+    this.drawCircle(cell.x, cell.y, 20, fillColor, strokeColor);
+  }
 
-    this.ctx.fillStyle = '#ffffff';
+  drawFood(food: Food) {
+    const fillColor = 'rgba(255, 0, 0, 0.7)';
+    const strokeColor = 'rgba(255, 0, 0, 0.8)';
+    this.drawCircle(food.x, food.y, 10, fillColor, strokeColor);
+  }
+
+  drawGrid(width: number, height: number) {
+    const fillColor = 'rgba(255, 255, 255)';
+    const strokeColor = 'rgba(221, 221, 221)';
+
+    this.ctx.fillStyle = fillColor;
     this.ctx.fillRect(0, 0, width, height);
 
     this.ctx.beginPath();
@@ -56,23 +74,22 @@ class CanvasService {
 
     this.ctx.closePath();
 
-    this.ctx.strokeStyle = "#ddd";
+    this.ctx.strokeStyle = strokeColor;
     this.ctx.lineWidth = 1;
     this.ctx.stroke();
 
   }
 
-  drawCircle(x: number, y: number, radius: number) {
-    this.ctx.fillStyle = "#FF0000";
+  drawCircle(x: number, y: number, radius: number, fillColor: string, strokeColor: string) {
+    this.ctx.fillStyle = fillColor;
     this.ctx.beginPath();
     this.ctx.arc(x,y,radius,0,(Math.PI/180)*360,true);
     this.ctx.closePath();
     this.ctx.fill();
-    this.ctx.strokeStyle = "#D00000";
+    this.ctx.strokeStyle = strokeColor;
     this.ctx.lineWidth = 4;
     this.ctx.stroke();
   }
-
 }
 
 export default new CanvasService();

@@ -37,9 +37,9 @@ const SocketService = (props: Props) => {
       setSocketId(socket.id);
 
       socket.on('world', (world: World) => {
-        //console.log('world: ', world);
+        console.log('world: ', world);
         setWorld(world);
-        CanvasService.draw(world);
+        CanvasService.drawWorld(world);
       });
     });
   };
