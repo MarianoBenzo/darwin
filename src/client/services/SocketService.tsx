@@ -3,27 +3,25 @@ import {useEffect, useState} from "react";
 import * as io from "socket.io-client";
 import CanvasService from "./CanvasService";
 import {World} from "../models/World";
+import WorldStatistics from "../models/WorldStatistics";
 
 interface Props {
   children: JSX.Element[] | JSX.Element
 }
 
 export interface SocketContextProps {
-  socketId: string
-  world: World;
+  worldStatistics: WorldStatistics;
 }
 
 export const SocketContext = React.createContext<SocketContextProps>({
-  socketId: null,
-  world: null
+  worldStatistics: null
 });
 
 const SocketService = (props: Props) => {
 
   const {children} = props;
 
-  const [socketId, setSocketId] = useState(null);
-  const [world, setWorld] = useState(null);
+  const [worldStatistics, setWorldStatistics] = useState(null);
 
   useEffect(() => {
     init();
@@ -33,19 +31,19 @@ const SocketService = (props: Props) => {
     const socket = io();
 
     socket.on('connect', () => {
-      console.log("socket: ", socket.id);
-      setSocketId(socket.id);
 
       socket.on('world', (world: World) => {
-        setWorld(world);
         CanvasService.drawWorld(world);
+      });
+
+      socket.on('world::statistics', (worldStatistics: WorldStatistics) => {
+        setWorldStatistics(worldStatistics);
       });
     });
   };
 
   const context: SocketContextProps = {
-    socketId: socketId,
-    world: world
+    worldStatistics: worldStatistics
   };
 
   return (

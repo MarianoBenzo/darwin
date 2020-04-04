@@ -1,9 +1,11 @@
 export default class Cell {
   x: number;
   y: number;
+  radius: number;
 
-  constructor(food: any) {
-    this.x = food.x;
-    this.y = food.y;
+  constructor(cell: any) {
+    this.x = cell.x;
+    this.y = cell.y;
+    this.radius = cell.radius;
   }
 }

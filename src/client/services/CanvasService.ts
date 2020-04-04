@@ -41,13 +41,13 @@ class CanvasService {
   drawCell(cell: Cell) {
     const fillColor = 'rgba(0, 0, 255, 0.7)';
     const strokeColor = 'rgba(0, 0, 255, 0.8)';
-    this.drawCircle(cell.x, cell.y, 15, 3, fillColor, strokeColor);
+    this.drawCircle(cell.x, cell.y, cell.radius, 3, fillColor, strokeColor);
   }
 
   drawFood(food: Food) {
     const fillColor = 'rgba(255, 0, 0, 0.6)';
     const strokeColor = 'rgba(255, 0, 0, 0.7)';
-    this.drawCircle(food.x, food.y, 5, 2, fillColor, strokeColor);
+    this.drawCircle(food.x, food.y, food.radius, 2, fillColor, strokeColor);
   }
 
   drawGrid(width: number, height: number) {

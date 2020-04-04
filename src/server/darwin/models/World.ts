@@ -4,49 +4,54 @@ const Food = require("./Food.ts");
 const Cell = require("./Cell.ts");
 
 class World {
-  socketsIds: string[];
   width: number;
   height: number;
   foods: typeof Food[];
   cells: typeof Cell[];
 
   constructor() {
-    this.socketsIds = [];
     this.width = 1280;
     this.height = 720;
     this.foods = [];
-    for(let x = 0; x <= 10; x++) {
-      const width = Random.uniform(0, this.width)();
-      const height = Random.uniform(0, this.height)();
-      const angle = Random.uniform(0, 360)();
-      const velocity = 0.5;
-      this.foods.push(new Food(width, height, angle, velocity))
+    for(let x = 0; x < 10; x++) {
+      const food = Food.newFood(this.width, this.height);
+      this.foods.push(food);
     }
     this.cells = [];
-    for(let x = 0; x <= 20; x++) {
-      const width = Random.uniform(0, this.width)();
-      const height = Random.uniform(0, this.height)();
-      const angle = Random.uniform(0, 360)();
-      const velocity = 2;
-      this.cells.push(new Cell(width, height, angle, velocity));
+    for(let x = 0; x < 5; x++) {
+      const cell = Cell.newStartingCell(this.width, this.height);
+      this.cells.push(cell);
     }
-  }
 
-  addSocketId(socketId: string) {
-    this.socketsIds.push(socketId);
+    setInterval(this.update.bind(this), 1000/600);
   }
 
   update() {
-    this.moveFoods();
-    this.moveCells();
+    this.generateFood();
+    this.foods.forEach(food => food.update(this));
+    this.cells.forEach(cell => cell.update(this));
   }
 
-  moveFoods() {
-    this.foods.forEach(food => food.moveRandom(this.width, this.height));
+  addCell(cell: typeof Cell) {
+    this.cells.push(cell);
   }
 
-  moveCells() {
-    this.cells.forEach(cell => cell.moveRandom(this.width, this.height));
+  addFood(food: typeof Food) {
+    this.foods.push(food);
+  }
+
+  removeCell(cell: typeof Cell) {
+    this.cells = this.cells.filter(c => c !== cell);
+  }
+
+  removeFood(food: typeof Food) {
+    this.foods = this.foods.filter(f => f !== food);
+  }
+
+  generateFood() {
+    if (Random.uniformInt(0, 50)() === 0) {
+      this.addFood(Food.newFood(this.width, this.height));
+    }
   }
 }
 

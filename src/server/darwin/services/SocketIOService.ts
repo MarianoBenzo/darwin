@@ -1,29 +1,28 @@
 import SocketIO from 'socket.io';
 import {Server} from 'http';
-//import Socket = SocketIO.Socket;
-//import SocketIOServer = SocketIO.Server;
 
 const World = require("../models/World.ts").default;
+const WorldStatistics = require("../models/WorldStatistics.ts").default;
 
 class SocketIOService {
-  io: any;
+  io: SocketIO.Server;
 
   init(server: Server) {
     this.io = SocketIO(server);
     this.onConnection();
     this.emitWorld();
+    this.emitStatistics();
   }
 
   onConnection() {
     this.io.on('connection', (socket) => {
       console.log('New connection: ', socket.id);
-      World.addSocketId(socket.id);
 
       this.onDisconnect(socket);
     });
   }
 
-  onDisconnect(socket: any) {
+  onDisconnect(socket: SocketIO.Socket) {
     socket.on('disconnect', () => {
       console.log('Disconnect: ', socket.id);
     });
@@ -32,9 +31,16 @@ class SocketIOService {
   emitWorld() {
     const emit = () => {
       this.io.sockets.emit('world', World);
-      World.update();
     };
     setInterval(emit, 1000/60);
+  }
+
+  emitStatistics() {
+    const emit = () => {
+      const worldStatistics = new WorldStatistics(World);
+      this.io.sockets.emit('world::statistics', worldStatistics);
+    };
+    setInterval(emit, 1000/10)
   }
 }
 

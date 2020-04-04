@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import SocketService from "./services/SocketService";
-import {Test} from "./components/Test";
+import {WorldStatistics} from "./components/WorldStatistics";
 import {Canvas} from "./components/Canvas";
 
 const App = () => {
   return (
     <SocketService>
-      <Test/>
+      <WorldStatistics/>
       <Canvas/>
     </SocketService>
   )

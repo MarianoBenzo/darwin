@@ -12,7 +12,10 @@ class CoordinatesService {
   }
 
   vectorAngle(x: number, y: number) {
-    return Math.atan(y/x);
+    if (x > 0 && y > 0) return Math.atan(y/x) * 180/Math.PI;
+    if (x < 0 && y > 0) return Math.atan(y/x) * 180/Math.PI + 180;
+    if (x < 0 && y < 0) return Math.atan(y/x) * 180/Math.PI + 180;
+    if (x > 0 && y < 0) return Math.atan(y/x) * 180/Math.PI + 360;
   }
 
   vectorModule(x: number, y: number) {
@@ -21,6 +24,10 @@ class CoordinatesService {
 
   distance(x1: number, y1: number, x2: number, y2: number) {
     return this.vectorModule(x2 - x1, y2 - y1)
+  }
+
+  direction(x1: number, y1: number, x2: number, y2: number) {
+    return this.vectorAngle(x2 - x1, y2 - y1)
   }
 }
 
