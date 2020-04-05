@@ -23,7 +23,7 @@ class World {
       this.cells.push(cell);
     }
 
-    setInterval(this.update.bind(this), 1000/600);
+    setInterval(this.update.bind(this), 1000/60);
   }
 
   update() {

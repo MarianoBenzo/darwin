@@ -109,11 +109,10 @@ class Cell {
     let nextX = this.x + Math.cos(nextDirection * Math.PI / 180) * this.velocity;
     let nextY = this.y + Math.sin(nextDirection * Math.PI / 180) * this.velocity;
 
-    let foodDistance: number = CoordinatesService.distance(this.x, this.y, food.x, food.y);
-    if (this.velocity >= foodDistance) {
-      nextX = food.x;
-      nextY = food.y;
+    const actualDistance: number = CoordinatesService.distance(this.x, this.y, food.x, food.y);
+    const nextDistance: number = CoordinatesService.distance(nextX, nextY, food.x, food.y);
 
+    if(this.velocity >= actualDistance || nextDistance <= this.radius - food.radius) {
       this.eat(world, food);
     }
 
