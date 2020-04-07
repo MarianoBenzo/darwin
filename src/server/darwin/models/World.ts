@@ -38,10 +38,6 @@ class World {
     this.cells.push(cell);
   }
 
-  addFood(food: typeof Food) {
-    this.foods.push(food);
-  }
-
   removeCell(cell: typeof Cell) {
     this.cells = this.cells.filter(c => c !== cell);
   }
@@ -52,7 +48,8 @@ class World {
 
   generateFood() {
     if (Random.uniformInt(0, 25)() === 0) {
-      this.addFood(Food.startingFood(this.width, this.height));
+      const food = Food.startingFood(this.width, this.height);
+      this.foods.push(food);
     }
   }
 
