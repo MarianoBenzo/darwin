@@ -81,7 +81,7 @@ class Cell {
     const hungryEnough = this.maxHungry * 0.7 < this.hungry;
 
     if (preyInVisionRange && hungryEnough) {
-      this.position = MovementService.attackPosition(this.position, this.velocity, prey.position, world.width, world.height);
+      this.position = MovementService.getAttackPosition(this.position, this.velocity, prey.position, world.width, world.height);
 
       const distance: number = CoordinatesService.distance(this.position, prey.position);
 
@@ -89,7 +89,7 @@ class Cell {
         this.eat(world, prey);
       }
     } else {
-      this.position = MovementService.randomPosition(this.position, this.velocity, world.width, world.height);
+      this.position = MovementService.getRandomPosition(this.position, this.velocity, world.width, world.height);
     }
   }
 

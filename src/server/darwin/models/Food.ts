@@ -46,9 +46,9 @@ class Food {
     const predatorInVisionRange = predator && CoordinatesService.distance(this.position, predator.position) <= this.visionRange;
 
     if(predatorInVisionRange) {
-      this.position = MovementService.defensePosition(this.position, this.velocity, predator.position, world.width, world.height);
+      this.position = MovementService.getDefensePosition(this.position, this.velocity, predator.position, world.width, world.height);
     } else {
-      this.position = MovementService.randomPosition(this.position, this.velocity, world.width, world.height);
+      this.position = MovementService.getRandomPosition(this.position, this.velocity, world.width, world.height);
     }
   }
 }

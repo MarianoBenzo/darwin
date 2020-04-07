@@ -25,7 +25,7 @@ class World {
       this.cells.push(cell);
     }
 
-    setInterval(this.update.bind(this), 1000/60);
+    setInterval(this.update.bind(this), 1000/600);
   }
 
   update() {
@@ -51,7 +51,7 @@ class World {
   }
 
   generateFood() {
-    if (Random.uniformInt(0, 50)() === 0) {
+    if (Random.uniformInt(0, 25)() === 0) {
       this.addFood(Food.startingFood(this.width, this.height));
     }
   }

@@ -4,66 +4,49 @@ const Position = require("../models/Position.ts");
 const CoordinatesService = require("../services/CoordinatesService.ts");
 
 class MovementService {
-  randomPosition(position: typeof Position, velocity: number, worldWidth: number, worldHeight: number): typeof Position {
-    const nextDirection = Random.normal(position.direction, 5)();
-    const nextX = position.x + Math.cos(position.direction * Math.PI / 180) * velocity;
-    const nextY = position.y + Math.sin(position.direction * Math.PI / 180) * velocity;
+  getRandomPosition(position: typeof Position, velocity: number, worldWidth: number, worldHeight: number): typeof Position {
+    let newDirection = Random.normal(position.direction, 5)();
 
-    const x = this.normalizeX(nextX, worldWidth);
-    const y = this.normalizeY(nextY, worldHeight);
-    const direction = this.normalizeAngle(nextDirection);
+    if(position.x === 0) {
+      newDirection = position.direction < 180 ? Random.uniform(0, 90)() : Random.uniform(270, 360)();
+    } else if (position.x === worldWidth) {
+      newDirection = position.direction < 360 && position.direction > 270 ? Random.uniform(180, 270)() : Random.uniform(90, 180)();
+    } else if (position.y === 0) {
+      newDirection = position.direction < 270 ? Random.uniform(90, 180)() : Random.uniform(0, 90)();
+    } else if (position.y === worldHeight) {
+      newDirection = position.direction < 90 ? Random.uniform(270, 360)() : Random.uniform(180, 270)();
+    }
 
-    return new Position(x, y, direction);
+    return this.getNewPosition(position, newDirection, velocity, worldWidth, worldHeight);
   }
 
-  attackPosition(predatorPosition: typeof Position, velocity: number, preyPosition: typeof Position, worldWidth: number, worldHeight: number): typeof Position {
+  getAttackPosition(predatorPosition: typeof Position, velocity: number, preyPosition: typeof Position, worldWidth: number, worldHeight: number): typeof Position {
     const distance = CoordinatesService.distance(predatorPosition, preyPosition);
 
     if(distance <= velocity) {
       return preyPosition;
     } else {
-      const nextDirection = CoordinatesService.direction(predatorPosition, preyPosition);
-      const nextX = predatorPosition.x + Math.cos(nextDirection * Math.PI / 180) * velocity;
-      const nextY = predatorPosition.y + Math.sin(nextDirection * Math.PI / 180) * velocity;
+      const newDirection = CoordinatesService.direction(predatorPosition, preyPosition);
 
-      const x = this.normalizeX(nextX, worldWidth);
-      const y = this.normalizeY(nextY, worldHeight);
-      const direction = this.normalizeAngle(nextDirection);
-
-      return new Position(x, y, direction);
+      return this.getNewPosition(predatorPosition, newDirection, velocity, worldWidth, worldHeight);
     }
   }
 
-  defensePosition(preyPosition: typeof Position, velocity: number, predatorPosition: typeof Position, worldWidth: number, worldHeight: number): typeof Position {
-    const nextDirection = Random.normal(CoordinatesService.direction(preyPosition, predatorPosition) + 180, 10)();
-    let nextX = preyPosition.x + Math.cos(nextDirection * Math.PI / 180) * velocity;
-    let nextY = preyPosition.y + Math.sin(nextDirection * Math.PI / 180) * velocity;
+  getDefensePosition(preyPosition: typeof Position, velocity: number, predatorPosition: typeof Position, worldWidth: number, worldHeight: number): typeof Position {
+    const newDirection = CoordinatesService.direction(preyPosition, predatorPosition) + 180;
 
-    const x = this.normalizeX(nextX, worldWidth);
-    const y = this.normalizeY(nextY, worldHeight);
-    const direction = this.normalizeAngle(nextDirection);
+    return this.getNewPosition(preyPosition, newDirection, velocity, worldWidth, worldHeight);
+  }
+
+  getNewPosition(actualPosition: typeof Position, newDirection: number, velocity, worldWidth: number, worldHeight: number): typeof Position{
+    let newX = actualPosition.x + Math.cos(newDirection * Math.PI / 180) * velocity;
+    let newY = actualPosition.y + Math.sin(newDirection * Math.PI / 180) * velocity;
+
+    const x = newX < 0 ? 0 : Math.min(newX, worldWidth);
+    const y = newY < 0 ? 0 : Math.min(newY, worldHeight);
+    const direction = newDirection % 360 < 0 ? newDirection % 360 + 360 : newDirection % 360;
 
     return new Position(x, y, direction)
-  }
-
-  normalizeX(x: number, width: number): number {
-    if(x < 0) {
-      return 0;
-    } else {
-      return Math.min(x, width);
-    }
-  }
-
-  normalizeY(y: number, height: number): number {
-    if(y < 0) {
-      return 0;
-    } else {
-      return Math.min(y, height);
-    }
-  }
-
-  normalizeAngle(angle: number): number {
-    return angle % 360 < 0 ? angle % 360 + 360 : angle % 360;
   }
 }
 
