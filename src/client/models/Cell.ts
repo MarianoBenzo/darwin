@@ -1,11 +1,11 @@
+import Position from "./Position";
+
 export default class Cell {
-  x: number;
-  y: number;
+  position: Position;
   radius: number;
 
   constructor(cell: any) {
-    this.x = cell.x;
-    this.y = cell.y;
+    this.position = new Position(cell.position);
     this.radius = cell.radius;
   }
 }

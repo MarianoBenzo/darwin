@@ -1,15 +1,6 @@
+const Position = require("../models/Position.ts").default;
+
 class CoordinatesService {
-  normalizeX(x: number, width: number): number {
-    return x % width < 0 ? x % width + width : x % width;
-  }
-
-  normalizeY(y: number, height: number): number {
-    return y % height < 0 ? y % height + height : y % height;
-  }
-
-  normalizeAngle(angle: number): number {
-    return angle % 360 < 0 ? angle % 360 + 360 : angle % 360;
-  }
 
   vectorAngle(x: number, y: number) {
     if (x === 0) return Math.atan(y/x) * 180/Math.PI;
@@ -27,13 +18,13 @@ class CoordinatesService {
     return Math.sqrt(Math.pow(x,2) + Math.pow(y,2))
   }
 
-  distance(x1: number, y1: number, x2: number, y2: number) {
-    return this.vectorModule(x2 - x1, y2 - y1)
+  distance(position1: typeof Position, position2: typeof Position) {
+    return this.vectorModule(position2.x - position1.x, position2.y - position1.y)
   }
 
-  direction(x1: number, y1: number, x2: number, y2: number) {
-    return this.vectorAngle(x2 - x1, y2 - y1)
+  direction(position1: typeof Position, position2: typeof Position) {
+    return this.vectorAngle(position2.x - position1.x, position2.y - position1.y)
   }
 }
 
-export default new CoordinatesService();
+module.exports = new CoordinatesService();

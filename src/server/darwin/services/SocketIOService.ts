@@ -1,8 +1,8 @@
 import SocketIO from 'socket.io';
 import {Server} from 'http';
 
-const World = require("../models/World.ts").default;
-const WorldStatistics = require("../models/WorldStatistics.ts").default;
+const World = require("../models/World.ts");
+const WorldStatistics = require("../models/WorldStatistics.ts");
 
 class SocketIOService {
   io: SocketIO.Server;
@@ -44,4 +44,4 @@ class SocketIOService {
   }
 }
 
-export default new SocketIOService();
+module.exports = new SocketIOService();

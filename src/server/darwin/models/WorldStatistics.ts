@@ -1,4 +1,4 @@
-const World = require("./World.ts").default;
+const World = require("./World.ts");
 
 class WorldStatistics {
   statistics: Statistics[];
@@ -52,4 +52,4 @@ class Statistics {
   }
 }
 
-export default WorldStatistics;
+module.exports = WorldStatistics;

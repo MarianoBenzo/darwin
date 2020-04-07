@@ -1,6 +1,7 @@
 import {World} from "../models/World";
 import Food from "../models/Food";
 import Cell from "../models/Cell";
+import Position from "../models/Position";
 
 class CanvasService {
   ctx: CanvasRenderingContext2D;
@@ -13,17 +14,17 @@ class CanvasService {
     this.height = window.innerHeight;
   }
 
-  initialize(canvas: HTMLCanvasElement, ) {
-    canvas.style.width='100%';
-    canvas.style.height='100%';
-    canvas.width  = this.width;
+  initialize(canvas: HTMLCanvasElement,) {
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.width = this.width;
     canvas.height = this.height;
 
     this.ctx = canvas.getContext('2d');
   }
 
   drawWorld(world: World) {
-    if(this.ctx) {
+    if (this.ctx) {
       this.ctx.clearRect(0, 0, this.width, this.height);
 
       this.drawGrid(world.width, world.height);
@@ -41,13 +42,13 @@ class CanvasService {
   drawCell(cell: Cell) {
     const fillColor = 'rgba(0, 0, 255, 0.7)';
     const strokeColor = 'rgba(0, 0, 255, 0.8)';
-    this.drawCircle(cell.x, cell.y, cell.radius, 3, fillColor, strokeColor);
+    this.drawCircle(cell.position, cell.radius, 3, fillColor, strokeColor);
   }
 
   drawFood(food: Food) {
     const fillColor = 'rgba(255, 0, 0, 0.6)';
     const strokeColor = 'rgba(255, 0, 0, 0.7)';
-    this.drawCircle(food.x, food.y, food.radius, 2, fillColor, strokeColor);
+    this.drawCircle(food.position, food.radius, 2, fillColor, strokeColor);
   }
 
   drawGrid(width: number, height: number) {
@@ -80,10 +81,10 @@ class CanvasService {
 
   }
 
-  drawCircle(x: number, y: number, radius: number, lineWidth: number, fillColor: string, strokeColor: string) {
+  drawCircle(position: Position, radius: number, lineWidth: number, fillColor: string, strokeColor: string) {
     this.ctx.fillStyle = fillColor;
     this.ctx.beginPath();
-    this.ctx.arc(x,y,radius,0,(Math.PI/180)*360,true);
+    this.ctx.arc(position.x, position.y, radius, 0, (Math.PI / 180) * 360, true);
     this.ctx.closePath();
     this.ctx.fill();
     this.ctx.strokeStyle = strokeColor;

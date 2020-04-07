@@ -1,11 +1,11 @@
+import Position from "./Position";
+
 export default class Food {
-  x: number;
-  y: number;
+  position: Position;
   radius: number;
 
   constructor(food: any) {
-    this.x = food.x;
-    this.y = food.y;
+    this.position = new Position(food.position);
     this.radius = food.radius;
   }
 }

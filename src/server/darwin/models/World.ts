@@ -2,6 +2,8 @@ import Random from 'random';
 
 const Food = require("./Food.ts");
 const Cell = require("./Cell.ts");
+const Position = require("./Position.ts");
+const CoordinatesService = require("../services/CoordinatesService.ts");
 
 class World {
   width: number;
@@ -14,12 +16,12 @@ class World {
     this.height = 720;
     this.foods = [];
     for(let x = 0; x < 10; x++) {
-      const food = Food.newFood(this.width, this.height);
+      const food = Food.startingFood(this.width, this.height);
       this.foods.push(food);
     }
     this.cells = [];
     for(let x = 0; x < 5; x++) {
-      const cell = Cell.newStartingCell(this.width, this.height);
+      const cell = Cell.startingCell(this.width, this.height);
       this.cells.push(cell);
     }
 
@@ -50,9 +52,51 @@ class World {
 
   generateFood() {
     if (Random.uniformInt(0, 50)() === 0) {
-      this.addFood(Food.newFood(this.width, this.height));
+      this.addFood(Food.startingFood(this.width, this.height));
     }
+  }
+
+  getNearestCell(position: typeof Position): typeof Cell {
+    let nearestCell: typeof Cell = null;
+    let nearestCellDistance: number = null;
+
+    this.cells.forEach((cell: typeof Cell) => {
+      const cellDistance = CoordinatesService.distance(position, cell.position);
+
+      if (nearestCell) {
+        if(nearestCellDistance > cellDistance) {
+          nearestCell = cell;
+          nearestCellDistance = cellDistance;
+        }
+      } else {
+        nearestCell = cell;
+        nearestCellDistance = cellDistance;
+      }
+    });
+
+    return nearestCell;
+  }
+
+  getNearestFood(position: typeof Position): typeof Food {
+    let nearestFood: typeof Food = null;
+    let nearestFoodDistance: number = null;
+
+    this.foods.forEach((food: typeof Food) => {
+      const foodDistance = CoordinatesService.distance(position, food.position);
+
+      if (nearestFood) {
+        if(nearestFoodDistance > foodDistance) {
+          nearestFood = food;
+          nearestFoodDistance = foodDistance;
+        }
+      } else {
+        nearestFood = food;
+        nearestFoodDistance = foodDistance;
+      }
+    });
+
+    return nearestFood;
   }
 }
 
-export default new World();
+module.exports = new World();

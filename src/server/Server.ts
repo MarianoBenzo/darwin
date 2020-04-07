@@ -3,7 +3,7 @@ import express from 'express';
 import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 
-const SocketIOService = require("./darwin/services/SocketIOService.ts").default;
+const SocketIOService = require("./darwin/services/SocketIOService.ts");
 
 // initializing packages
 const app = express();

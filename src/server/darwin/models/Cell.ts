@@ -1,16 +1,16 @@
 import Random from 'random';
 
-const World = require("./World.ts").default;
-const Food = require("./Food.ts").default;
-const CoordinatesService = require("../services/CoordinatesService.ts").default;
+const World = require("./World.ts");
+const Food = require("./Food.ts");
+const Position = require("./Position.ts");
+const MovementService = require("../services/MovementService.ts");
+const CoordinatesService = require("../services/CoordinatesService.ts");
 
 class Cell {
   age: number;
   generation: number;
   radius: number;
-  x: number;
-  y: number;
-  direction: number;
+  position: typeof Position;
   velocity: number;
   visionRange: number;
   mitosisTime: number;
@@ -20,9 +20,7 @@ class Cell {
   constructor(
     generation: number,
     radius: number,
-    x: number,
-    y: number,
-    direction: number,
+    position: typeof Position,
     velocity: number,
     visionRange: number,
     mitosisTime: number,
@@ -32,9 +30,7 @@ class Cell {
     this.age = 0;
     this.generation = generation;
     this.radius = radius;
-    this.x = x;
-    this.y = y;
-    this.direction = direction;
+    this.position = position;
     this.velocity = velocity;
     this.visionRange = visionRange;
     this.mitosisTime = mitosisTime;
@@ -42,33 +38,29 @@ class Cell {
     this.hungry = hungry ? hungry : 0;
   }
 
-  static newStartingCell(worldWidth: number, worldHeight: number) {
+  static startingCell(worldWidth: number, worldHeight: number) {
     const generation = 0;
     const radius = 15;
-    const x = Random.uniform(0, worldWidth)();
-    const y = Random.uniform(0, worldHeight)();
-    const direction = Random.uniform(0, 360)();
+    const position = Position.random(worldWidth, worldHeight);
     const velocity = Random.normal(2, 0.2)();
     const visionRange = Random.normal(200, 2)();
     const mitosisTime = Math.round(Random.normal(2000, 20)());
     const maxHungry = Math.round(Random.normal(1000, 10)());
 
-    return new Cell(generation, radius, x, y, direction, velocity, visionRange, mitosisTime, maxHungry);
+    return new Cell(generation, radius, position, velocity, visionRange, mitosisTime, maxHungry);
   }
 
   mitosis(world: typeof World) {
     const generation = this.generation + 1;
     const radius = 15;
-    const x = this.x;
-    const y = this.y;
-    const direction = this.direction;
+    const position = this.position;
     const velocity = Random.normal(this.velocity, 0.2)();
     const visionRange = Random.normal(this.visionRange, 2)();
     const mitosisTime = Math.round(Random.normal(this.mitosisTime, 20)());
     const maxHungry = Math.round(Random.normal(this.maxHungry, 10)());
     const hungry = Math.min(this.hungry, maxHungry);
 
-    const newCell = new Cell(generation, radius, x, y, direction, velocity, visionRange, mitosisTime, maxHungry, hungry);
+    const newCell = new Cell(generation, radius, position, velocity, visionRange, mitosisTime, maxHungry, hungry);
 
     world.addCell(newCell);
   }
@@ -84,72 +76,26 @@ class Cell {
   }
 
   move(world: typeof World) {
-    const targetFood: typeof Food = this.targetFood(world);
-    const targetFoodInVisionRange = targetFood && CoordinatesService.distance(this.x, this.y, targetFood.x, targetFood.y) <= this.visionRange;
+    const prey: typeof Food = world.getNearestFood(this.position);
+    const preyInVisionRange = prey && CoordinatesService.distance(this.position, prey.position) <= this.visionRange;
+    const hungryEnough = this.maxHungry * 0.7 < this.hungry;
 
-    if (targetFoodInVisionRange) {
-      this.moveAttack(world, targetFood);
+    if (preyInVisionRange && hungryEnough) {
+      this.position = MovementService.attackPosition(this.position, this.velocity, prey.position, world.width, world.height);
+
+      const distance: number = CoordinatesService.distance(this.position, prey.position);
+
+      if(distance <= this.radius - prey.radius) {
+        this.eat(world, prey);
+      }
     } else {
-      this.moveRandom(world.width, world.height);
+      this.position = MovementService.randomPosition(this.position, this.velocity, world.width, world.height);
     }
-  }
-
-  moveRandom(worldWidth: number, worldHeight: number) {
-    const nextDirection = Random.normal(this.direction, 5)();
-    const nextX = this.x + Math.cos(this.direction * Math.PI / 180) * this.velocity;
-    const nextY = this.y + Math.sin(this.direction * Math.PI / 180) * this.velocity;
-
-    this.direction = CoordinatesService.normalizeAngle(nextDirection);
-    this.x = CoordinatesService.normalizeX(nextX, worldWidth);
-    this.y = CoordinatesService.normalizeY(nextY, worldHeight);
-  }
-
-  moveAttack(world: typeof World, food: typeof Food) {
-    const nextDirection = CoordinatesService.direction(this.x, this.y, food.x, food.y);
-    let nextX = this.x + Math.cos(nextDirection * Math.PI / 180) * this.velocity;
-    let nextY = this.y + Math.sin(nextDirection * Math.PI / 180) * this.velocity;
-
-    const actualDistance: number = CoordinatesService.distance(this.x, this.y, food.x, food.y);
-    const nextDistance: number = CoordinatesService.distance(nextX, nextY, food.x, food.y);
-
-    if(this.velocity >= actualDistance || nextDistance <= this.radius - food.radius) {
-      this.eat(world, food);
-    }
-
-    this.direction = CoordinatesService.normalizeAngle(nextDirection);
-    this.x = CoordinatesService.normalizeX(nextX, world.width);
-    this.y = CoordinatesService.normalizeY(nextY, world.height);
   }
 
   eat(world: typeof World, food: typeof Food) {
-    this.hungry -= food.calories;
+    this.hungry = Math.max(0, this.hungry - food.calories);
     world.removeFood(food);
-  }
-
-  targetFood(world: typeof Food): typeof Food{
-    let targetFood: typeof Food = null;
-    let targetFoodDistance: number = null;
-
-    world.foods.forEach((food: typeof Food) => {
-      const foodDistance = CoordinatesService.distance(this.x, this.y, food.x, food.y);
-
-      if(this.hungry >= food.calories) {
-
-        if (targetFood) {
-          if(targetFoodDistance > foodDistance) {
-            targetFood = food;
-            targetFoodDistance = foodDistance;
-          }
-        } else {
-          targetFood = food;
-          targetFoodDistance = foodDistance;
-        }
-
-      }
-    });
-
-    return targetFood;
-
   }
 }
 
