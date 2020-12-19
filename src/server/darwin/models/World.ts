@@ -47,7 +47,7 @@ class World {
   }
 
   generateFood() {
-    if (Random.uniformInt(0, 25)() === 0) {
+    if (this.cells.length > 0 && Random.uniformInt(0, 25)() === 0) {
       const food = Food.startingFood(this.width, this.height);
       this.foods.push(food);
     }

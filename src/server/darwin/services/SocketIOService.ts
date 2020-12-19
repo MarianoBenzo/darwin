@@ -32,7 +32,7 @@ class SocketIOService {
     const emit = () => {
       this.io.sockets.emit('world', World);
     };
-    setInterval(emit, 1000/60);
+    setInterval(emit, 1000/45);
   }
 
   emitStatistics() {
